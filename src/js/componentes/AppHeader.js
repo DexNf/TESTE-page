@@ -33,6 +33,39 @@ class AppHeader extends HTMLElement {
 
     connectedCallback() {
         this.render();
+
+        // Atualiza a tradução dos textos do header depois da tradução aplicada na página
+        document.addEventListener('traducaoAplicada', (event) => {
+            this.atualizarTextos(event.detail);
+        });
+
+        // Atualiza logo após carregar, com a língua salva (caso já esteja definida)
+        const linguaAtual = localStorage.getItem('lingua') || 'pt';
+        fetch(`https://abi-frontend-mu.vercel.app/src/json/lang/${linguaAtual}.json`)
+            .then(res => res.json())
+            .then(traducaoJson => this.atualizarTextos(traducaoJson))
+            .catch(() => { /* trata erro se quiser */ });
+    }
+
+    atualizarTextos(traducaoJson) {
+        // Atualiza os textos dos links de navegação
+        this.navLinks.forEach(link => {
+            const el = this.querySelector(`[data-key="${link.key}"]`);
+            if (el && traducaoJson[link.key]) {
+                el.innerHTML = traducaoJson[link.key];
+            }
+        });
+
+        // Atualiza os botões da área do usuário
+        const btnLogin = this.querySelector('#btnLogin');
+        if (btnLogin && traducaoJson['loginTitle']) {
+            btnLogin.innerHTML = traducaoJson['loginTitle'];
+        }
+
+        const btnLogout = this.querySelector('#btnLogout');
+        if (btnLogout && traducaoJson['deslogarTitle']) {
+            btnLogout.innerHTML = traducaoJson['deslogarTitle'];
+        }
     }
 
     render() {

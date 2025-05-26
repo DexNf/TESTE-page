@@ -64,17 +64,15 @@ const carregarTraducao = async (lingua) => {
  * @param {Object} traducaoJson Objeto contendo a tradução
  */
 const aplicarTraducao = (traducaoJson) => {
-    // passa por todos os elementos que tem o atributo [data-key]
     document.querySelectorAll('[data-key]').forEach(el => {
-        // pega a chave que o elemento representa
         const chave = el.dataset.key;
-        // se a chave está presente na tradução
         if (traducaoJson[chave]) {
-            // coloca a tradução no texto do elemento
             el.innerHTML = traducaoJson[chave];
         }
-    })
-}
+    });
+    // Dispara evento para o header atualizar também
+    document.dispatchEvent(new CustomEvent('traducaoAplicada', { detail: traducaoJson }));
+};
 
 // codigo que vai rodar quando a pagina carregar
 document.addEventListener('DOMContentLoaded', async () => {
